@@ -295,7 +295,7 @@ class MPU(object):
                    for i in range(7)]
 
             accel_ready = False
-            gyro_read = False
+            gyro_ready = False
             for passno in range(20):
                 self.calibration = off
                 avg = self.get_sensor_avg(numsamples)
