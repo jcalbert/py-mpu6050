@@ -1,4 +1,6 @@
 import micropython
+from micropython import const
+
 micropython.alloc_emergency_exception_buf(100)
 
 from machine import Pin, reset, disable_irq, enable_irq
@@ -10,10 +12,10 @@ import socket
 import select
 import time
 
-default_port = 8000
-default_irq_pin = 4
-default_write_interval = 10
-default_gc_interval = 1000
+default_port = const(8000)
+default_irq_pin = const(4)
+default_write_interval = const(10)
+default_gc_interval = const(1000)
 
 def tojson(values):
     inner = []

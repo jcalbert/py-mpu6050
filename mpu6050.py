@@ -2,6 +2,7 @@ import gc
 from machine import Pin, I2C, PWM
 import time
 import micropython
+from micropython import const
 from ustruct import unpack
 
 from constants import *
@@ -9,15 +10,21 @@ import cfilter
 
 micropython.alloc_emergency_exception_buf(100)
 
-default_pin_scl = 13
-default_pin_sda = 12
-default_pin_intr = 14
-default_pin_led = 5
-default_sample_rate = 0x20
+#Hardware constants
+_default_pin_scl = const(13)
+_default_pin_sda = const(12)
+_default_pin_intr = const(14)
+_default_pin_led = const(5) #2 for nodemcu
 
-default_calibration_numsamples = 200
-default_calibration_accel_deadzone = 15
-default_calibration_gyro_deadzone = 5
+_default_sample_rate = const(0x20)
+
+#calibration procedure constants
+_default_calibration_numsamples = const(200)
+_default_calibration_accel_deadzone = const(15)
+_default_calibration_gyro_deadzone = const(5)
+
+stable_reading_timeout = const(10)
+max_gyro_variance = const(5)
 
 accel_range = [2, 4, 8, 16]
 gyro_range = [250, 500, 1000, 2000]
@@ -34,11 +41,11 @@ class MPU(object):
                  intr=None, led=None, rate=None,
                  address=None):
 
-        self.scl = scl if scl is not None else default_pin_scl
-        self.sda = sda if sda is not None else default_pin_sda
-        self.intr = intr if intr is not None else default_pin_intr
-        self.led = led if led is not None else default_pin_led
-        self.rate = rate if rate is not None else default_sample_rate
+        self.scl = scl if scl is not None else _default_pin_scl
+        self.sda = sda if sda is not None else _default_pin_sda
+        self.intr = intr if intr is not None else _default_pin_intr
+        self.led = led if led is not None else _default_pin_led
+        self.rate = rate if rate is not None else _default_sample_rate
 
         self.address = address if address else MPU6050_DEFAULT_ADDRESS
 
@@ -227,9 +234,6 @@ class MPU(object):
 
         return [x//samples for x in counters]
 
-    stable_reading_timeout = 10
-    max_gyro_variance = 5
-
     def wait_for_stable(self, numsamples=10):
         print('* waiting for gyros to stabilize')
 
@@ -275,11 +279,11 @@ class MPU(object):
         self.calibration = [0] * 7
 
         numsamples = (numsamples if numsamples is not None
-                   else default_calibration_numsamples)
+                   else _default_calibration_numsamples)
         accel_deadzone = (accel_deadzone if accel_deadzone is not None
-                          else default_calibration_accel_deadzone)
+                          else _default_calibration_accel_deadzone)
         gyro_deadzone = (gyro_deadzone if gyro_deadzone is not None
-                         else default_calibration_gyro_deadzone)
+                         else _default_calibration_gyro_deadzone)
 
         print('* start calibration')
         self.set_state_calibrating()

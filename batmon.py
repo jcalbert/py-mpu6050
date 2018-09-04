@@ -3,9 +3,10 @@
 import esp
 from flashbdev import bdev
 import machine
+from micropython import const
 
-ADC_MODE_VCC = 255
-ADC_MODE_ADC = 0
+_ADC_MODE_VCC = const(255)
+_ADC_MODE_ADC = const(0)
 
 def set_adc_mode(mode):
     sector_size = bdev.SEC_SIZE
@@ -22,10 +23,10 @@ def set_adc_mode(mode):
         return
 
 def enable_battery_monitor():
-    set_adc_mode(ADC_MODE_VCC)
+    set_adc_mode(_ADC_MODE_VCC)
 
 def disable_battery_monitor():
-    set_adc_mode(ADC_MODE_ADC)
+    set_adc_mode(_ADC_MODE_ADC)
 
 def battery():
     vcc = machine.ADC(1)
